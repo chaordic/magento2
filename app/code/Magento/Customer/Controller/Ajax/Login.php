@@ -59,6 +59,17 @@ class Login extends \Magento\Framework\App\Action\Action
     protected $scopeConfig;
 
     /**
+     * @var \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory
+     */
+    protected $cookieMetadataFactory;
+
+    /**
+     * @var \Magento\Framework\Stdlib\Cookie\PhpCookieManager
+     */
+    protected $cookieMetadataManager;
+
+
+    /**
      * Initialize Login controller
      *
      * @param \Magento\Framework\App\Action\Context $context
@@ -67,6 +78,8 @@ class Login extends \Magento\Framework\App\Action\Action
      * @param AccountManagementInterface $customerAccountManagement
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
+     * @param \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieMetadataFactory
+     * @param \Magento\Framework\Stdlib\Cookie\PhpCookieManager $cookieMetadataManager
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -74,7 +87,9 @@ class Login extends \Magento\Framework\App\Action\Action
         \Magento\Framework\Json\Helper\Data $helper,
         AccountManagementInterface $customerAccountManagement,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
+        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
+        \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieMetadataFactory,
+        \Magento\Framework\Stdlib\Cookie\PhpCookieManager $cookieMetadataManager
     ) {
         parent::__construct($context);
         $this->customerSession = $customerSession;
@@ -82,6 +97,8 @@ class Login extends \Magento\Framework\App\Action\Action
         $this->customerAccountManagement = $customerAccountManagement;
         $this->resultJsonFactory = $resultJsonFactory;
         $this->resultRawFactory = $resultRawFactory;
+        $this->cookieMetadataFactory = $cookieMetadataFactory;
+        $this->cookieMetadataManager = $cookieMetadataManager;
     }
 
     /**
@@ -168,6 +185,12 @@ class Login extends \Magento\Framework\App\Action\Action
             );
             $this->customerSession->setCustomerDataAsLoggedIn($customer);
             $this->customerSession->regenerateId();
+            if ($this->cookieMetadataManager->getCookie('mage-cache-sessid')) {
+                $metadata = $this->cookieMetadataFactory->createCookieMetadata();
+                $metadata->setPath('/');
+                $this->cookieMetadataManager->deleteCookie('mage-cache-sessid', $metadata);
+            }
+
             $redirectRoute = $this->getAccountRedirect()->getRedirectCookie();
             if (!$this->getScopeConfig()->getValue('customer/startup/redirect_dashboard') && $redirectRoute) {
                 $response['redirectUrl'] = $this->_redirect->success($redirectRoute);
