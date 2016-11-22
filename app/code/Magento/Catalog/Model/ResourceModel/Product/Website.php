@@ -65,6 +65,7 @@ class Website extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $connection->beginTransaction();
         try {
             $connection->delete($this->getMainTable(), $whereCond);
+            $this->updateProducstUpdatedAt($connection, $productIds);
             $connection->commit();
         } catch (\Exception $e) {
             $connection->rollBack();
@@ -104,6 +105,7 @@ class Website extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                     );
                 }
             }
+            $this->updateProducstUpdatedAt($connection, $productIds);
             $this->getConnection()->commit();
         } catch (\Exception $e) {
             $this->getConnection()->rollBack();
@@ -135,5 +137,24 @@ class Website extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         }
 
         return $result;
+    }
+
+    /**
+     * Refresh products updated_at
+     *
+     * @param array $productIds
+     * @param $connection
+     */
+    protected function updateProducstUpdatedAt($connection, array $productIds = [])
+    {
+        if (empty($productIds)) {
+            return;
+        }
+
+        return $connection->update(
+            $connection->getTableName('catalog_product_entity'),
+            ['updated_at' => (new \DateTime('now'))->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT)],
+            ['entity_id IN (?)' => $productIds]
+        );
     }
 }
