@@ -121,6 +121,9 @@ class Item extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _afterSave(AbstractModel $object)
     {
         parent::_afterSave($object);
+
+        $this->updateProductUpdatedAt($object->getProductId());
+
         /** @var StockItemInterface $object */
         if ($this->processIndexEvents) {
             $this->stockIndexerProcessor->reindexRow($object->getProductId());
@@ -138,5 +141,19 @@ class Item extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         $this->processIndexEvents = $process;
         return $this;
+    }
+
+    /**
+     * Refresh product updated_at
+     *
+     * @param int $productId
+     */
+    protected function updateProductUpdatedAt($productId)
+    {
+        return $this->getConnection()->update(
+            $connection->getTableName('catalog_product_entity'),
+            ['updated_at' => (new \DateTime())->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT)],
+            ['entity_id = ?' => $productId]
+        );
     }
 }
