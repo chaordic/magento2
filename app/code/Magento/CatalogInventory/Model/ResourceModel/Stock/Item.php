@@ -150,7 +150,9 @@ class Item extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function updateProductUpdatedAt($productId)
     {
-        return $this->getConnection()->update(
+        $connection = $this->getConnection();
+        
+        return $connection->update(
             $connection->getTableName('catalog_product_entity'),
             ['updated_at' => (new \DateTime())->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT)],
             ['entity_id = ?' => $productId]
