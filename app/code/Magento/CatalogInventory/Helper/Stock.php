@@ -158,6 +158,7 @@ class Stock
                 $collection,
                 !$isShowOutOfStock && $collection->getFlag('require_stock_items')
             );
+
             $collection->setFlag($stockFlag, true);
         }
     }
