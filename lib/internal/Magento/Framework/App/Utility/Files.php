@@ -754,7 +754,7 @@ class Files
         $files = self::getFiles(
             array_merge(
                 [
-                    BP . "/lib/web/{mage,varien}"
+                    BP . "/lib/web/{mage,varien,jquery}"
                 ],
                 $themePaths,
                 $moduleWebPaths
