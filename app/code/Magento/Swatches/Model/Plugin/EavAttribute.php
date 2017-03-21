@@ -193,7 +193,7 @@ class EavAttribute
     {
         $dependencyArray = [];
         if (is_array($optionsArray['value'])) {
-            $optionCounter = 1;
+            $optionCounter = 0;
             foreach (array_keys($optionsArray['value']) as $baseOptionId) {
                 $dependencyArray[$baseOptionId] = $attributeSavedOptions[$optionCounter]['value'];
                 $optionCounter++;
