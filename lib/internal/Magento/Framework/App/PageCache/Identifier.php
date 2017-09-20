@@ -20,32 +20,16 @@ class Identifier
      */
     protected $context;
 
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
-
-    /**
-     * @var \Magento\Framework\App\Cache
-     */
-    protected $cache;
-
      /**
      * @param \Magento\Framework\App\Request\Http $request
      * @param \Magento\Framework\App\Http\Context $context
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Framework\App\Cache $cache
      */
     public function __construct(
         \Magento\Framework\App\Request\Http $request,
-        \Magento\Framework\App\Http\Context $context,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Framework\App\Cache $cache
+        \Magento\Framework\App\Http\Context $context
     ) {
         $this->request = $request;
         $this->context = $context;
-        $this->scopeConfig = $scopeConfig;
-        $this->cache = $cache;
     }
 
     /**
@@ -55,16 +39,9 @@ class Identifier
      */
     public function getValue()
     {
-        $url = $this->cache->load('WEB_SECURE_URL');
-
-        if(empty($url)) {
-            $url = $this->scopeConfig->getValue('web/secure/base_url', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-            $this->cache->save($url,'WEB_SECURE_URL');
-        }
-
         $data = [
             $this->request->isSecure(),
-            $url,
+            $this->request->getUriString(),
             $this->request->getFrontName(),
             $this->request->get(\Magento\Framework\App\Response\Http::COOKIE_VARY_STRING)
                 ?: $this->context->getVaryString()
