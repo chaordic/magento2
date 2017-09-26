@@ -11,6 +11,31 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 class AbstractResourceTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var AbstractResourceStub
+     */
+    private $abstractResource;
+
+    /**
+     * @var Json|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $serializerMock;
+
+    /**
+     * @var \Psr\Log\LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $loggerMock;
+
+    protected function setUp()
+    {
+        $objectManager = new ObjectManager($this);
+        $this->serializerMock = $this->createMock(Json::class);
+        $this->loggerMock = $this->createMock(\Psr\Log\LoggerInterface::class);
+        $this->abstractResource = $objectManager->getObject(AbstractResourceStub::class);
+        $objectManager->setBackwardCompatibleProperty($this->abstractResource,'serializer',$this->serializerMock);
+        $objectManager->setBackwardCompatibleProperty($this->abstractResource,'_logger',$this->loggerMock);
+    }
+
+    /**
      * @param array $arguments
      * @param string $expectation
      * @dataProvider serializableFieldsDataProvider
@@ -144,9 +169,6 @@ class AbstractResourceTest extends \PHPUnit_Framework_TestCase
         $abstractResource->commit();
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testCommitZeroLevelCallbackException()
     {
         /** @var AdapterInterface|\PHPUnit_Framework_MockObject_MockObject $connection */
@@ -165,6 +187,8 @@ class AbstractResourceTest extends \PHPUnit_Framework_TestCase
         $connection->expects(static::once())
             ->method('getTransactionLevel')
             ->willReturn(0);
+        $this->loggerMock->expects($this->once())
+            ->method('critical');
 
         $abstractResource->commit();
     }
