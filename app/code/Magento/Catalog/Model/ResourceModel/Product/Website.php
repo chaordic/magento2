@@ -105,7 +105,7 @@ class Website extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                     );
                 }
             }
-            $this->updateProducstUpdatedAt($connection, $productIds);
+            $this->updateProducstUpdatedAt($this->getConnection(), $productIds);
             $this->getConnection()->commit();
         } catch (\Exception $e) {
             $this->getConnection()->rollBack();
