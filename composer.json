@@ -2,7 +2,7 @@
     "name": "magento/magento2ce",
     "description": "Magento 2 (Community Edition)",
     "type": "project",
-    "version": "2.1.5.9",
+    "version": "2.1.5.10",
     "license": [
         "OSL-3.0",
         "AFL-3.0"
@@ -32,9 +32,9 @@
         "zendframework/zend-log": "~2.4.6",
         "zendframework/zend-http": "~2.4.6",
         "magento/zendframework1": "~1.12.16",
-        "colinmollenhour/credis": "1.6",
-        "colinmollenhour/php-redis-session-abstract": "1.2",
-        "colinmollenhour/cache-backend-redis": "1.9",
+        "colinmollenhour/credis": "~1.9.0",
+        "colinmollenhour/php-redis-session-abstract": "~1.3.5",
+        "colinmollenhour/cache-backend-redis": "1.10.2",
         "colinmollenhour/cache-backend-file": "1.4",
         "composer/composer": "<=1.0.0-beta1",
         "monolog/monolog": "1.16.0",
