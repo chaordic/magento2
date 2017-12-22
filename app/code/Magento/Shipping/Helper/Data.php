@@ -11,6 +11,9 @@
  */
 namespace Magento\Shipping\Helper;
 
+use \Magento\Framework\App\ObjectManager;
+use \Magento\Framework\UrlInterface;
+
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     /**
@@ -25,15 +28,20 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $_storeManager;
 
+    /** @var \Magento\Framework\UrlInterface */
+    private $_url;
+
     /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        UrlInterface $url = null
     ) {
         $this->_storeManager = $storeManager;
+        $this->_url = $url ?: ObjectManager::getInstance()->get(UrlInterface::class);
         parent::__construct($context);
     }
 
@@ -64,12 +72,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $urlPart = "{$key}:{$model->{$method}()}:{$model->getProtectCode()}";
         $params = [
+            '_scope' => $model->getStoreId(),
+            '_nosid' => true,
             '_direct' => 'shipping/tracking/popup',
             '_query' => ['hash' => $this->urlEncoder->encode($urlPart)]
         ];
 
-        $storeModel = $this->_storeManager->getStore($model->getStoreId());
-        return $storeModel->getUrl('', $params);
+        return $this->_url->getUrl('', $params);
     }
 
     /**
