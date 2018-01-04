@@ -28,20 +28,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $_storeManager;
 
-    /** @var \Magento\Framework\UrlInterface */
-    private $_url;
-
     /**
      * @param \Magento\Framework\App\Helper\Context $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        UrlInterface $url = null
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->_storeManager = $storeManager;
-        $this->_url = $url ?: ObjectManager::getInstance()->get(UrlInterface::class);
         parent::__construct($context);
     }
 
@@ -78,7 +73,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             '_query' => ['hash' => $this->urlEncoder->encode($urlPart)]
         ];
 
-        return $this->_url->getUrl('', $params);
+        return $this->_urlBuilder->getUrl('', $params);
     }
 
     /**
