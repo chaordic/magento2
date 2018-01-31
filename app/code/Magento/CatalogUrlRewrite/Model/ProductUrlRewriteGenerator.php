@@ -191,8 +191,9 @@ class ProductUrlRewriteGenerator
      */
     protected function isCategoryProperForGenerating($category, $storeId)
     {
-        if ($category->getParentId() != \Magento\Catalog\Model\Category::TREE_ROOT_ID) {
-            list(, $rootCategoryId) = $category->getParentIds();
+        $parentIds = $category->getParentIds();
+        if (count($parentIds) >= 2) {
+            $rootCategoryId = $parentIds[1];
             return $rootCategoryId == $this->storeManager->getStore($storeId)->getRootCategoryId();
         }
         return false;
