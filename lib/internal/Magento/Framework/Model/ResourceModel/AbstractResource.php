@@ -5,9 +5,9 @@
  */
 namespace Magento\Framework\Model\ResourceModel;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DataObject;
 use Magento\Framework\Model\CallbackPool;
-use Magento\Framework\Serialize\Serializer\Json;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -15,12 +15,6 @@ use Psr\Log\LoggerInterface;
  */
 abstract class AbstractResource
 {
-    /**
-     * @var Json
-     * @since 100.2.0
-     */
-    protected $serializer;
-
     /**
      * @var LoggerInterface
      */
@@ -240,21 +234,6 @@ abstract class AbstractResource
             $columns = empty($fieldsetColumns) ? '*' : [$object->getIdFieldName()];
         }
         return $columns;
-    }
-
-    /**
-     * Get serializer
-     *
-     * @return Json
-     * @deprecated 100.2.0
-     * @since 100.2.0
-     */
-    protected function getSerializer()
-    {
-        if (null === $this->serializer) {
-            $this->serializer = ObjectManager::getInstance()->get(Json::class);
-        }
-        return $this->serializer;
     }
 
     /**
